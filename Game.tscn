@@ -1,0 +1,59 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://states/game/GameState.gd" type="Script" id=1]
+[ext_resource path="res://states/game/MainMenu.gd" type="Script" id=2]
+[ext_resource path="res://states/game/PauseMenu.gd" type="Script" id=3]
+[ext_resource path="res://states/game/InGame.gd" type="Script" id=4]
+[ext_resource path="res://scenes/actors/player/player.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Game.gd" type="Script" id=6]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 192.5, 10 )
+
+[sub_resource type="Environment" id=1]
+background_mode = 4
+glow_enabled = true
+glow_intensity = 1.7
+glow_strength = 1.2
+
+[node name="Game" type="Node2D"]
+script = ExtResource( 6 )
+
+[node name="GameState" type="Node" parent="."]
+script = ExtResource( 1 )
+
+[node name="MainMenu" type="Node" parent="GameState"]
+script = ExtResource( 2 )
+
+[node name="InGame" type="Node" parent="GameState"]
+script = ExtResource( 4 )
+
+[node name="PauseMenu" type="Node" parent="GameState"]
+script = ExtResource( 3 )
+
+[node name="Stage" type="Node2D" parent="."]
+__meta__ = {
+"_editor_description_": "Landing Zone for Game Objects (Actors, Objects, Levels)"
+}
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Stage"]
+position = Vector2( 187, 116 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Stage/StaticBody2D"]
+position = Vector2( 3.5, 15 )
+shape = SubResource( 2 )
+
+[node name="Player" parent="Stage" instance=ExtResource( 5 )]
+position = Vector2( 187, 116 )
+max_jump_height = 64
+min_jump_height = 12
+falling_gravity_multiplier = 0.2
+
+[node name="MainCamera" type="Camera2D" parent="."]
+position = Vector2( 190, 110 )
+current = true
+
+[node name="UI" type="CanvasLayer" parent="MainCamera"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 1 )
