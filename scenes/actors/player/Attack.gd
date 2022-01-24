@@ -1,16 +1,16 @@
 extends State
 
+var anim_finished
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
+func input(event):
+	var anim = this.combo.action(event)
+	if anim:
+		this.sprite.play(anim)
 
+func on_AnimatedSprite_animation_finished():
+	if this.sprite.animation.find("attack") != -1: 
+		if this.combo.timer.time_left == 0:
+			fsm.change_to("Idle")
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _on_Timer_timeout():
+	fsm.change_to("Idle")

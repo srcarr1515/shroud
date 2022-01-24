@@ -36,7 +36,7 @@ export var coyote_time : float = 0.1
 # Only neccessary when can_hold_jump is off
 # Pressing jump this many seconds before hitting the ground will still make you jump
 export var jump_buffer : float = 0.1
-
+export (bool) var disable_movement = false
 
 
 
@@ -81,7 +81,7 @@ func _ready():
 	jump_buffer_timer.wait_time = jump_buffer
 	jump_buffer_timer.one_shot = true
 
-func _physics_process(delta):
+func movement(delta):
 	acc.x = 0
 	
 	if is_on_floor():
@@ -129,8 +129,10 @@ func _physics_process(delta):
 	
 	if Input.is_action_just_released(input_jump):
 		holding_jump = false
-	
-	
+
+func _physics_process(delta):
+	if !disable_movement:
+		movement(delta)
 	var gravity = default_gravity
 	
 	if vel.y > 0: # If we are falling
@@ -154,7 +156,6 @@ func _physics_process(delta):
 	
 	vel += acc * delta
 	vel = move_and_slide(vel, Vector2.UP)
-
 
 
 func calculate_gravity(_max_jump_height, _jump_duration):

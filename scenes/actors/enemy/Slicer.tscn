@@ -1,0 +1,117 @@
+[gd_scene load_steps=30 format=2]
+
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_walk5.png" type="Texture" id=1]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_walk6.png" type="Texture" id=2]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_walk7.png" type="Texture" id=3]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_walk8.png" type="Texture" id=4]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_death1.png" type="Texture" id=5]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_death2.png" type="Texture" id=6]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_death3.png" type="Texture" id=7]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_10.png" type="Texture" id=8]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_6.png" type="Texture" id=9]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_7.png" type="Texture" id=10]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_8.png" type="Texture" id=11]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_5.png" type="Texture" id=12]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_9.png" type="Texture" id=13]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_1.png" type="Texture" id=14]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_2.png" type="Texture" id=15]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_3.png" type="Texture" id=16]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_attack_4.png" type="Texture" id=17]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_death4.png" type="Texture" id=18]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_death5.png" type="Texture" id=19]
+[ext_resource path="res://scenes/actors/enemy/enemy.tscn" type="PackedScene" id=20]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_walk2.png" type="Texture" id=21]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_walk3.png" type="Texture" id=22]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_walk1.png" type="Texture" id=23]
+[ext_resource path="res://assets/graphics/actors/enemy/slicer/slicer_walk4.png" type="Texture" id=24]
+[ext_resource path="res://scenes/actors/enemy/Slicer.gd" type="Script" id=25]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 6, 10 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 100, 32 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 22, 12.5 )
+
+[sub_resource type="SpriteFrames" id=2]
+animations = [ {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "idle",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 23 ), ExtResource( 21 ), ExtResource( 22 ), ExtResource( 24 ), ExtResource( 1 ), ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ) ],
+"loop": true,
+"name": "walk",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 18 ), ExtResource( 19 ) ],
+"loop": false,
+"name": "death",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 12 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 13 ), ExtResource( 8 ) ],
+"loop": true,
+"name": "attack",
+"speed": 12.0
+} ]
+
+[node name="Slicer" instance=ExtResource( 20 )]
+collision_layer = 0
+script = ExtResource( 25 )
+SPEED = 60
+JUMP_HEIGHT = -300
+
+[node name="CollisionShape2D" parent="." index="0"]
+visible = false
+position = Vector2( -1, -10 )
+shape = SubResource( 1 )
+
+[node name="eye" parent="." index="1"]
+visible = false
+position = Vector2( -1, -10 )
+collision_layer = 0
+collision_mask = 7
+
+[node name="CollisionShape2D" parent="eye" index="0"]
+position = Vector2( 0, -22 )
+shape = SubResource( 3 )
+
+[node name="jumpcast" parent="jumpcasts" index="0"]
+position = Vector2( 0, 58 )
+cast_to = Vector2( 24, 0 )
+
+[node name="jumpmax" parent="jumpcasts" index="1"]
+position = Vector2( 0, 36 )
+cast_to = Vector2( 24, 0 )
+
+[node name="sight" parent="." index="4"]
+position = Vector2( 1, -15 )
+
+[node name="VisibilityNotifier2D" parent="." index="5"]
+visible = false
+
+[node name="DetectBox" parent="." index="8"]
+position = Vector2( 0, -1 )
+scale = Vector2( -1, 1 )
+
+[node name="Area" parent="DetectBox" index="0"]
+position = Vector2( -23, 1 )
+
+[node name="Shape" parent="DetectBox/Area" index="0"]
+position = Vector2( 0, -13 )
+shape = SubResource( 4 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="Sprite" index="0"]
+position = Vector2( 0, -11 )
+frames = SubResource( 2 )
+animation = "idle"
+playing = true
+offset = Vector2( 6, -2 )
+
+[node name="CenterPoint" parent="." index="11"]
+position = Vector2( 8, -9 )
+
+[editable path="DetectBox"]
