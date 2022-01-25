@@ -30,7 +30,6 @@ onready var detectbox = $DetectBox
 onready var confused = $confused
 onready var center_point = $CenterPoint
 
-
 func _ready():
 #	$Sprite.texture = SpriteTex
 #	if TexAnchor == "bottom":
@@ -70,7 +69,7 @@ func canJump():
 		return false
 		
 func move(delta):
-	if targetBody.position.x - position.x + 32 <= 50 and targetBody.position.x - position.x >= -50:
+	if targetBody.position.x - position.x + 24 <= 50 and targetBody.position.x - position.x >= -50:
 		Targetdir.x = 0
 		if detectbox.target != null:
 			play("attack")
@@ -93,6 +92,7 @@ func move(delta):
 
 	if canSee() and !TargetActive:
 		TargetActive = true
+		
 		
 	if canAlwaysSee == "always":
 		TargetActive = true
@@ -142,17 +142,22 @@ func move(delta):
 	if !canSee() and TargetActive and not $outofrange.time_left > 0:
 		$outofrange.start()
 
+func flip_h(is_flipped):
+	sprite.set_flip_h(is_flipped)
+	if sprite.flip_h:
+		detectbox.scale.x = 1
+	else:
+		detectbox.scale.x = -1
+
 func _physics_process(delta):
 	motion.y += GRAVITY
 	if targetBody:
 		if confused.time_left < 0.1:
 			move(delta)
-	motion = move_and_slide(motion, UP);
-	sprite.set_flip_h(motion.x < 0)
-	if sprite.flip_h:
-		detectbox.scale.x = 1
-	else:
-		detectbox.scale.x = -1
+	motion = move_and_slide(motion, UP)
+	var is_flipped = motion.x < 0 || (TargetActive && targetBody.global_position.x < global_position.x)
+	if confused.time_left < 0.1:
+		flip_h(is_flipped)
 
 func play(animation):
 	if sprite.has_method("play"):

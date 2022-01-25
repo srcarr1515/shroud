@@ -7,11 +7,18 @@ var is_blinking = false
 var this
 var starting_point
 var endpoint_override
+onready var raycasts = $Endpoint/Sprite/raycasts
+
+func toggle_raycasts(is_enabled):
+	for raycast in raycasts.get_children():
+		raycast.set_enabled(is_enabled)
 
 func _ready():
+	toggle_raycasts(false)
 	this = get_parent()
 
 func set_endpoint(_direction=null):
+	toggle_raycasts(true)
 	endpoint_override = null
 	if this.type == "player":
 		var dir = Vector2.ZERO
@@ -24,13 +31,26 @@ func set_endpoint(_direction=null):
 			else:
 				dir = _direction
 			if abs(dir.x) > deadzone || abs(dir.y) > deadzone:
+				for raycast in raycasts.get_children():
+					raycast.global_rotation = 0
 				this.blink.rotation = dir.angle()
 				return true
 			
 		elif this.input_type == "key/mouse":
+			for raycast in raycasts.get_children():
+				raycast.global_rotation = 0
 			this.blink.look_at(this.get_global_mouse_position())
 			if Input.is_action_just_pressed("left_mouse"):
 				return true
+
+func is_colliding():
+	var is_colliding = false
+	for raycast in raycasts.get_children():
+		raycast.force_raycast_update()
+		is_colliding = raycast.is_colliding()
+		if is_colliding:
+			break
+	return is_colliding
 
 func teleport():
 	if !is_blinking:
@@ -40,16 +60,31 @@ func teleport():
 		modulate.a = 0.5
 		this.sprite.modulate = modulate
 		yield(get_tree().create_timer(0.1), "timeout")
-		starting_point = global_position
+		var init_local_endpoint = endpoint.position
 		var end_position = endpoint.global_position
 		if endpoint_override:
 			end_position = endpoint_override
-		var initial_endpoint = end_position
+		else:
+			while is_colliding():
+				endpoint.position.x -= 8
+			endpoint.position.x -= 16
+			if is_colliding():
+				endpoint.position.x += 32
+			if endpoint.position.x < 0:
+				endpoint.position.x = 0
+			end_position = endpoint.global_position
 		this.global_position = end_position
-		if this.test_move(this.transform, Vector2(1, 0)):
-			this.global_position = (initial_endpoint + starting_point) / 2
-		if this.test_move(this.transform, Vector2(1, 0)):
-			this.global_position = initial_endpoint
+		endpoint.position = init_local_endpoint
+		toggle_raycasts(false)
+		
+		
+		
+#		this.global_position = end_position
+#		if this.test_move(this.transform, Vector2(1, 0)):
+#			this.global_position = (initial_endpoint + starting_point) / 2
+#		if this.test_move(this.transform, Vector2(1, 0)):
+#			this.global_position = initial_endpoint
+
 		this.sprite.material.set_shader_param("shake_rate", 0)
 		modulate.a = 1.0
 		this.sprite.modulate = modulate

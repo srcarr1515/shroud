@@ -56,7 +56,7 @@ func _input(event):
 		## Ignore ones that are too far
 		for enemy in enemies:
 			var enemy_distance = enemy.global_position.distance_to(this.global_position)
-			if  enemy_distance <= 480:
+			if  enemy_distance <= 180:
 				valid_targets.push_front(enemy)
 				if enemy_distance < valid_targets[nearest_target_index].global_position.distance_to(this.global_position):
 					nearest_target_index = valid_targets.find(enemy)
@@ -74,6 +74,8 @@ func _input(event):
 	if Input.is_action_pressed("ui_focus"):
 		var deadzone = 0.5
 		if Input.is_action_pressed("ui_blink"):
+			if valid_targets.empty():
+				return
 			## Get Right Analog Direction
 			var dir = Vector2()
 			dir.x = Input.get_joy_axis(0, JOY_AXIS_0)
@@ -93,8 +95,8 @@ func _input(event):
 				nearest_target_index = next_index
 		
 		## Always face target icon
-		this.sprite.flip_h = crosshairs.global_position < this.global_position
-
+		if crosshairs != null:
+			this.sprite.flip_h = crosshairs.global_position < this.global_position
 	if Input.is_action_pressed("ui_blink") && !Input.is_action_pressed("ui_focus"):
 		if this.blink.set_endpoint():
 			change_to("Blink")

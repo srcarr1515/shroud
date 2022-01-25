@@ -257,6 +257,7 @@ script = ExtResource( 69 )
 script = ExtResource( 70 )
 
 [node name="Blink" type="Node2D" parent="." index="8"]
+position = Vector2( 1, -13 )
 script = ExtResource( 72 )
 
 [node name="Timer" type="Timer" parent="Blink" index="0"]
@@ -264,12 +265,54 @@ wait_time = 0.1
 one_shot = true
 
 [node name="Endpoint" type="Position2D" parent="Blink" index="1"]
-position = Vector2( 89, 0 )
+position = Vector2( 90, 0 )
 
 [node name="Sprite" type="Sprite" parent="Blink/Endpoint" index="0"]
 visible = false
 scale = Vector2( 0.2, 0.2 )
 texture = ExtResource( 71 )
+
+[node name="raycasts" type="Node2D" parent="Blink/Endpoint/Sprite" index="0"]
+
+[node name="UP" type="RayCast2D" parent="Blink/Endpoint/Sprite/raycasts" index="0"]
+scale = Vector2( 5, 5 )
+enabled = true
+cast_to = Vector2( 0, -8 )
+
+[node name="UPLEFT" type="RayCast2D" parent="Blink/Endpoint/Sprite/raycasts" index="1"]
+scale = Vector2( 5, 5 )
+enabled = true
+cast_to = Vector2( -8, -8 )
+
+[node name="UPRIGHT" type="RayCast2D" parent="Blink/Endpoint/Sprite/raycasts" index="2"]
+scale = Vector2( 5, 5 )
+enabled = true
+cast_to = Vector2( 8, -8 )
+
+[node name="DOWN" type="RayCast2D" parent="Blink/Endpoint/Sprite/raycasts" index="3"]
+scale = Vector2( 5, 5 )
+enabled = true
+cast_to = Vector2( 0, 8 )
+
+[node name="DOWNRIGHT" type="RayCast2D" parent="Blink/Endpoint/Sprite/raycasts" index="4"]
+scale = Vector2( 5, 5 )
+enabled = true
+cast_to = Vector2( 8, 8 )
+
+[node name="DOWNLEFT" type="RayCast2D" parent="Blink/Endpoint/Sprite/raycasts" index="5"]
+scale = Vector2( 5, 5 )
+enabled = true
+cast_to = Vector2( -8, 8 )
+
+[node name="LEFT" type="RayCast2D" parent="Blink/Endpoint/Sprite/raycasts" index="6"]
+scale = Vector2( 5, 5 )
+enabled = true
+cast_to = Vector2( -8, 0 )
+
+[node name="RIGHT" type="RayCast2D" parent="Blink/Endpoint/Sprite/raycasts" index="7"]
+scale = Vector2( 5, 5 )
+enabled = true
+cast_to = Vector2( 8, 0 )
 
 [node name="Combo" type="Node" parent="." index="9"]
 script = ExtResource( 73 )

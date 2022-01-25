@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://states/game/GameState.gd" type="Script" id=1]
 [ext_resource path="res://states/game/MainMenu.gd" type="Script" id=2]
@@ -8,12 +8,7 @@
 [ext_resource path="res://Game.gd" type="Script" id=6]
 [ext_resource path="res://scenes/actors/enemy/Slicer.tscn" type="PackedScene" id=7]
 [ext_resource path="res://MainCamera.gd" type="Script" id=8]
-
-[sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 346, 8.75 )
-
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 35.5, 12 )
+[ext_resource path="res://scenes/levels/1.tscn" type="PackedScene" id=9]
 
 [sub_resource type="Environment" id=1]
 background_mode = 4
@@ -41,32 +36,13 @@ __meta__ = {
 "_editor_description_": "Landing Zone for Game Objects (Actors, Objects, Levels)"
 }
 
+[node name="Level" parent="Stage" instance=ExtResource( 9 )]
+
 [node name="Slicer" parent="Stage" instance=ExtResource( 7 )]
-position = Vector2( 352, 103 )
-pathpointA = Vector2( 352, 352 )
-pathpointB = Vector2( 100, 0 )
-
-[node name="Slicer2" parent="Stage" instance=ExtResource( 7 )]
-position = Vector2( 26, 102 )
-pathpointA = Vector2( 60, 0 )
-pathpointB = Vector2( 100, 0 )
-
-[node name="StaticBody2D" type="StaticBody2D" parent="Stage"]
-position = Vector2( 188, 95 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Stage/StaticBody2D"]
-position = Vector2( -20, 20 )
-shape = SubResource( 3 )
-
-[node name="StaticBody2D2" type="StaticBody2D" parent="Stage"]
-position = Vector2( 163, -33 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Stage/StaticBody2D2"]
-position = Vector2( 42, -24 )
-shape = SubResource( 2 )
+position = Vector2( 387, -84 )
 
 [node name="Player" parent="Stage" instance=ExtResource( 5 )]
-position = Vector2( 245, 39 )
+position = Vector2( 167, 100 )
 max_jump_height = 64
 min_jump_height = 12
 falling_gravity_multiplier = 0.2
