@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/actors/enemy/enemy.gd" type="Script" id=1]
 [ext_resource path="res://library/common/DetectBox.tscn" type="PackedScene" id=2]
+[ext_resource path="res://library/common/HurtBox.tscn" type="PackedScene" id=3]
+[ext_resource path="res://library/common/HitBox.tscn" type="PackedScene" id=4]
 
 [node name="Enemy" type="KinematicBody2D" groups=["enemy"]]
 collision_layer = 5
@@ -66,6 +68,24 @@ one_shot = true
 
 [node name="CenterPoint" type="Position2D" parent="."]
 
+[node name="HitBox" parent="." instance=ExtResource( 4 )]
+
+[node name="Area" parent="HitBox" index="0"]
+collision_layer = 0
+collision_mask = 2
+
+[node name="HurtBox" parent="." instance=ExtResource( 3 )]
+
+[node name="Area" parent="HurtBox" index="0"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="StunTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="AttackTimer" type="Timer" parent="."]
+
 [connection signal="timeout" from="outofrange" to="." method="_on_outofrange_timeout"]
 [connection signal="screen_entered" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_entered"]
 [connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]
@@ -73,5 +93,11 @@ one_shot = true
 [connection signal="no_targets_remain" from="DetectBox" to="." method="_on_DetectBox_no_targets_remain"]
 [connection signal="target_detected" from="DetectBox" to="." method="_on_DetectBox_target_detected"]
 [connection signal="timeout" from="confused" to="." method="_on_confused_timeout"]
+[connection signal="is_dead" from="HurtBox" to="." method="_on_HurtBox_is_dead"]
+[connection signal="took_damage" from="HurtBox" to="." method="_on_HurtBox_took_damage"]
+[connection signal="timeout" from="StunTimer" to="." method="_on_StunTimer_timeout"]
+[connection signal="timeout" from="AttackTimer" to="." method="_on_AttackTimer_timeout"]
 
 [editable path="DetectBox"]
+[editable path="HitBox"]
+[editable path="HurtBox"]

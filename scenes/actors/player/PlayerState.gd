@@ -37,22 +37,40 @@ func _on_Player_on_walk():
 		this.acc = this.acc / 1.5
 		yield(this.sprite, "animation_finished")
 	this.sprite.play("run")
-	this.sprite.set_flip_h(this.vel.x < 0)
+	this.flip_h(this.vel.x < 0)
 	change_to("Run")
 
 func _on_Player_on_walk_stop():
 	change_to("Idle")
 	
 func _physics_process(delta):
-	if crosshairs != null:
-		crosshairs.global_position = (valid_targets[nearest_target_index].center_point.global_position)
+	if state.name == "Dead":
+		return
+	if crosshairs != null && !valid_targets.empty():
+		var cur_target = valid_targets[nearest_target_index]
+		if GameData.is_destroyed(cur_target) || GameData.is_deleted_obj(cur_target):
+			valid_targets.erase(cur_target)
+			if valid_targets.empty():
+				remove_crosshairs()
+		else:
+			crosshairs.global_position = (valid_targets[nearest_target_index].center_point.global_position)
+			if Input.is_action_pressed("ui_attack"):
+				if crosshairs.global_position.distance_to(this.global_position) < 80:
+					var velocity = this.global_position.direction_to(crosshairs.global_position) * 300
+					velocity.y = 0
+					this.move_and_slide(velocity)
+
+func remove_crosshairs():
+	crosshairs = null
+	for crosshairs in get_tree().get_nodes_in_group("crosshairs"):
+		crosshairs.queue_free()
 
 func _input(event):
+	if state.name == "Dead":
+		return
 	if Input.is_action_just_pressed("ui_focus"):
 		var enemies = get_tree().get_nodes_in_group("enemy")
-		crosshairs = null
-		for crosshairs in get_tree().get_nodes_in_group("crosshairs"):
-			crosshairs.queue_free()
+		remove_crosshairs()
 		## Ignore ones that are too far
 		for enemy in enemies:
 			var enemy_distance = enemy.global_position.distance_to(this.global_position)
@@ -96,7 +114,7 @@ func _input(event):
 		
 		## Always face target icon
 		if crosshairs != null:
-			this.sprite.flip_h = crosshairs.global_position < this.global_position
+			this.flip_h(crosshairs.global_position < this.global_position)
 	if Input.is_action_pressed("ui_blink") && !Input.is_action_pressed("ui_focus"):
 		if this.blink.set_endpoint():
 			change_to("Blink")
@@ -105,3 +123,6 @@ func _input(event):
 
 func _on_AnimatedSprite_animation_finished():
 	activate_state("on_AnimatedSprite_animation_finished")
+
+func _on_HurtBox_is_dead():
+	change_to("Dead")

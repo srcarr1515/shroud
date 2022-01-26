@@ -17,5 +17,7 @@ func remove_grave(_target):
 
 func purge_graveyard():
 	graveyard = []
-	
 
+func is_deleted_obj(obj):
+	var object = "{obj}".format({"obj" : obj})
+	return object == "[Deleted Object]"

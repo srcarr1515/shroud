@@ -43,12 +43,32 @@ func set_endpoint(_direction=null):
 			if Input.is_action_just_pressed("left_mouse"):
 				return true
 
+func is_valid_endpoint(global_pos):
+	var wallmap = Helpers.pick_nearest("wallmap", global_pos)
+	var tile_pos = wallmap.world_to_map(global_pos)
+	var tile = wallmap.get_cellv(tile_pos)
+	return tile == wallmap.INVALID_CELL
+
+func get_valid_endpoint(global_pos):
+	var wallmap = Helpers.pick_nearest("wallmap", global_pos)
+	var tile_pos = wallmap.world_to_map(global_pos)
+	var tile = wallmap.get_cellv(tile_pos)
+	if tile == wallmap.INVALID_CELL:
+		var new_position = wallmap.map_to_world(tile_pos)
+		new_position += Vector2(16, 16)
+		return new_position
+
 func is_colliding():
 	var is_colliding = false
 	for raycast in raycasts.get_children():
 		raycast.force_raycast_update()
 		is_colliding = raycast.is_colliding()
 		if is_colliding:
+#			var collider = raycast.get_collider()
+#			if collider is TileMap:
+#				var tile_position = collider.world_to_map(endpoint.global_position)
+#				print(tile_position)
+#				print(collider.get_cellv(tile_position))
 			break
 	return is_colliding
 
@@ -62,18 +82,21 @@ func teleport():
 		yield(get_tree().create_timer(0.1), "timeout")
 		var init_local_endpoint = endpoint.position
 		var end_position = endpoint.global_position
+		is_valid_endpoint(end_position)
 		if endpoint_override:
 			end_position = endpoint_override
 		else:
-			while is_colliding():
-				endpoint.position.x -= 8
-			endpoint.position.x -= 16
-			if is_colliding():
-				endpoint.position.x += 32
+			if !is_valid_endpoint(endpoint.global_position):
+				while !is_valid_endpoint(endpoint.global_position):
+					endpoint.position.x -= 8
+#				endpoint.position.x -= 16
+#			if is_colliding():
+#				endpoint.position.x += 32
 			if endpoint.position.x < 0:
 				endpoint.position.x = 0
-			end_position = endpoint.global_position
-		this.global_position = end_position
+			end_position = get_valid_endpoint(endpoint.global_position)
+		if end_position != null:
+			this.global_position = end_position
 		endpoint.position = init_local_endpoint
 		toggle_raycasts(false)
 		

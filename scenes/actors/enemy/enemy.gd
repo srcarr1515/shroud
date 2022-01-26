@@ -69,7 +69,7 @@ func canJump():
 		return false
 		
 func move(delta):
-	if targetBody.position.x - position.x + 24 <= 50 and targetBody.position.x - position.x >= -50:
+	if targetBody.position.x - position.x - 6 <= 32 and targetBody.position.x - position.x >= -32:
 		Targetdir.x = 0
 		if detectbox.target != null:
 			play("attack")
@@ -146,18 +146,21 @@ func flip_h(is_flipped):
 	sprite.set_flip_h(is_flipped)
 	if sprite.flip_h:
 		detectbox.scale.x = 1
+		$HitBox.scale.x = -1
 	else:
 		detectbox.scale.x = -1
+		$HitBox.scale.x = 1
 
 func _physics_process(delta):
 	motion.y += GRAVITY
-	if targetBody:
+	if $StunTimer.time_left == 0:
+		if targetBody:
+			if confused.time_left == 0:
+				move(delta)
+		motion = move_and_slide(motion, UP)
+		var is_flipped = motion.x < 0 || (TargetActive && targetBody.global_position.x < global_position.x)
 		if confused.time_left < 0.1:
-			move(delta)
-	motion = move_and_slide(motion, UP)
-	var is_flipped = motion.x < 0 || (TargetActive && targetBody.global_position.x < global_position.x)
-	if confused.time_left < 0.1:
-		flip_h(is_flipped)
+			flip_h(is_flipped)
 
 func play(animation):
 	if sprite.has_method("play"):
@@ -189,6 +192,7 @@ func _on_idletimer_timeout():
 
 
 func _on_DetectBox_no_targets_remain():
+	$AttackTimer.stop()
 	if TargetActive:
 		play("walk")
 	else:
@@ -197,9 +201,26 @@ func _on_DetectBox_no_targets_remain():
 
 func _on_DetectBox_target_detected(_target):
 	play("attack")
+	$AttackTimer.start()
 
 func confuse():
 	confused.start()
 
 func _on_confused_timeout():
 	pass # Replace with function body.
+
+func _on_HurtBox_is_dead():
+	GameData.destroy(self)
+
+func _on_StunTimer_timeout():
+	detectbox.set_disabled(false)
+
+func _on_HurtBox_took_damage(_amount):
+	$StunTimer.start()
+	detectbox.set_disabled(true)
+	play("idle")
+
+func _on_AttackTimer_timeout():
+	play("idle")
+	play("attack")
+	

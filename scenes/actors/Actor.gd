@@ -2,9 +2,9 @@ extends PlatformerController2D
 class_name Actor
 
 var sprite
-onready var detect = $DetectBox/Area
-onready var hitbox = $HitBox/Area
-onready var hurtbox = $HurtBox/Area
+onready var detect = $DetectBox
+onready var hitbox = $HitBox
+onready var hurtbox = $HurtBox
 var status = "active"
 export (String) var type
 
