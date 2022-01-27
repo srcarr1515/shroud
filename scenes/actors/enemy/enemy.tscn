@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scenes/actors/enemy/enemy.gd" type="Script" id=1]
 [ext_resource path="res://library/common/DetectBox.tscn" type="PackedScene" id=2]
 [ext_resource path="res://library/common/HurtBox.tscn" type="PackedScene" id=3]
 [ext_resource path="res://library/common/HitBox.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/actors/shared/behaviors/BehaviorController.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/actors/shared/behaviors/Teleport.tscn" type="PackedScene" id=6]
 
 [sub_resource type="Shader" id=2]
 code = "shader_type canvas_item;
@@ -96,7 +98,7 @@ void fragment( )
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = SubResource( 2 )
-shader_param/shake_power = 0.2
+shader_param/shake_power = 0.01
 shader_param/shake_rate = 0.0
 shader_param/shake_speed = 5.0
 shader_param/shake_block_size = 32.5
@@ -106,7 +108,7 @@ shader_param/width = 0.2
 shader_param/outline_color = Color( 0.105882, 0.980392, 1, 1 )
 shader_param/pixel_size = 1
 shader_param/flash_color = Color( 1, 1, 1, 1 )
-shader_param/flash_modifier = 1.0
+shader_param/flash_modifier = 0.0
 
 [node name="Enemy" type="KinematicBody2D" groups=["enemy"]]
 collision_layer = 5
@@ -198,18 +200,30 @@ one_shot = true
 
 [node name="AttackTimer" type="Timer" parent="."]
 
+[node name="BehaviorController" parent="." instance=ExtResource( 5 )]
+
+[node name="Teleport" parent="BehaviorController" instance=ExtResource( 6 )]
+
+[node name="Heal" type="Node" parent="BehaviorController"]
+
+[node name="EnergyTimer" type="Timer" parent="."]
+autostart = true
+
 [connection signal="timeout" from="outofrange" to="." method="_on_outofrange_timeout"]
 [connection signal="screen_entered" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_entered"]
 [connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]
 [connection signal="timeout" from="idletimer" to="." method="_on_idletimer_timeout"]
 [connection signal="no_targets_remain" from="DetectBox" to="." method="_on_DetectBox_no_targets_remain"]
 [connection signal="target_detected" from="DetectBox" to="." method="_on_DetectBox_target_detected"]
+[connection signal="animation_finished" from="Sprite/SpritePlayer" to="." method="_on_SpritePlayer_animation_finished"]
 [connection signal="animation_finished" from="Sprite/EffectPlayer" to="." method="_on_EffectPlayer_animation_finished"]
 [connection signal="timeout" from="confused" to="." method="_on_confused_timeout"]
 [connection signal="is_dead" from="HurtBox" to="." method="_on_HurtBox_is_dead"]
 [connection signal="took_damage" from="HurtBox" to="." method="_on_HurtBox_took_damage"]
+[connection signal="took_damage" from="HurtBox" to="BehaviorController" method="_on_hit"]
 [connection signal="timeout" from="StunTimer" to="." method="_on_StunTimer_timeout"]
 [connection signal="timeout" from="AttackTimer" to="." method="_on_AttackTimer_timeout"]
+[connection signal="timeout" from="EnergyTimer" to="." method="_on_EnergyTimer_timeout"]
 
 [editable path="DetectBox"]
 [editable path="HitBox"]

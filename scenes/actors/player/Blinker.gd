@@ -14,7 +14,6 @@ func _process(delta):
 	var collision = move_and_collide(velocity * delta)
 	if collision && is_colliding == false:
 		is_colliding = true
-		print("boom")
 		pos_setter.look_at(this.global_position)
 		this.global_position = pos_setter.get_node("Pointer").global_position
 		queue_free()

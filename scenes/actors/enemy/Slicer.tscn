@@ -63,14 +63,14 @@ animations = [ {
 "name": "death",
 "speed": 12.0
 }, {
-"frames": [ ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 12 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 13 ), ExtResource( 8 ) ],
-"loop": false,
-"name": "attack",
-"speed": 12.0
-}, {
 "frames": [ ExtResource( 23 ), ExtResource( 21 ), ExtResource( 22 ), ExtResource( 24 ), ExtResource( 1 ), ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ) ],
 "loop": true,
 "name": "walk",
+"speed": 12.0
+}, {
+"frames": [ ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 12 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 13 ), ExtResource( 8 ) ],
+"loop": false,
+"name": "attack",
 "speed": 12.0
 } ]
 
@@ -136,10 +136,22 @@ tracks/4/keys = {
 "update": 0,
 "values": [ true ]
 }
+tracks/5/type = "value"
+tracks/5/path = NodePath("Sprite:offset")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( -1, -12 ) ]
+}
 
 [sub_resource type="Animation" id=10]
 resource_name = "attack"
-length = 2.0
+length = 1.2
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
@@ -147,10 +159,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 1,
-"values": [ 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ]
+"values": [ 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 11 ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("../HitBox/Area/Shape:disabled")
@@ -322,6 +334,7 @@ collision_layer = 0
 script = ExtResource( 25 )
 SPEED = 60
 JUMP_HEIGHT = -300
+max_energy = 3
 
 [node name="CollisionShape2D" parent="." index="0"]
 visible = false
@@ -364,7 +377,7 @@ position = Vector2( 5.5, -13 )
 shape = SubResource( 4 )
 
 [node name="Sprite" parent="Sprite" index="0"]
-position = Vector2( 0, -2 )
+position = Vector2( 8, -2 )
 texture = ExtResource( 27 )
 offset = Vector2( -1, -12 )
 hframes = 7
@@ -402,9 +415,17 @@ rotation = 1.5708
 shape = SubResource( 7 )
 disabled = true
 
+[node name="HurtBox" parent="." index="13"]
+max_hp = 100
+
 [node name="Shape" parent="HurtBox/Area" index="0"]
 position = Vector2( 8, -10 )
 shape = SubResource( 6 )
+
+[node name="Teleport" parent="BehaviorController" index="0"]
+disabled = false
+hit_activated = true
+hit_threshold = 3
 
 [editable path="DetectBox"]
 [editable path="HitBox"]

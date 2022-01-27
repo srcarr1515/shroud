@@ -35,7 +35,21 @@ onready var detectbox = $DetectBox
 onready var confused = $confused
 onready var center_point = $CenterPoint
 
+export (int) var max_energy
+var energy setget set_energy, get_energy
+
+func get_energy():
+	return energy
+
+func set_energy(_val):
+	energy = _val
+	if energy < 1:
+		energy = 0
+	elif energy > max_energy:
+		energy = max_energy
+
 func _ready():
+	energy = max_energy
 	effect_player.play("Glow")
 	if movement_settings == "static":
 		pathpointA = global_position
@@ -43,13 +57,6 @@ func _ready():
 	elif movement_settings == "patrol":
 		pathpointA = global_position + Vector2(movement_value, 0)
 		pathpointB = global_position + Vector2(-movement_value, 0)
-#	$Sprite.texture = SpriteTex
-#	if TexAnchor == "bottom":
-#		$Sprite.offset.y = 64 - ($Sprite.get_rect().size.y/2)
-#	elif TexAnchor == "top":
-#		$Sprite.offset.y = -64 + ($Sprite.get_rect().size.y/2)
-#	elif TexAnchor == "center":
-#		$Sprite.offset.y = 0
 	sprite = $Sprite.get_children().front()
 	$idletimer.wait_time = idleTime
 	$outofrange.wait_time = outofrangeTime
@@ -81,33 +88,42 @@ func canJump():
 		return false
 		
 func move(delta):
-	if activepoint == 0:
-		if position.distance_to(pathpointA) < 1:
-			state = "idle"
-		else:
-			state = "walk"
-			if pathpointA.x - position.x <= 5 and pathpointA.x - position.x >= -5 :
-				pathpointdir.x = 0
+	if state != "attack":
+		if activepoint == 0:
+			if position.distance_to(pathpointA) < 1:
+				state = "idle"
 			else:
-				pathpointdir.x = sign(pathpointA.x - position.x)
-	elif activepoint == 1:
-		if position.distance_to(pathpointB) < 1:
-			state = "idle"
-		else:
-			state = "walk"
-			if pathpointB.x - position.x <= 5 and pathpointB.x - position.x >= -5:
-				pathpointdir.x = 0
+				state = "walk"
+				if pathpointA.x - position.x <= 5 and pathpointA.x - position.x >= -5 :
+					pathpointdir.x = 0
+				else:
+					pathpointdir.x = sign(pathpointA.x - position.x)
+		elif activepoint == 1:
+			if position.distance_to(pathpointB) < 1:
+				state = "idle"
 			else:
-				pathpointdir.x = sign(pathpointB.x - position.x)
+				state = "walk"
+				if pathpointB.x - position.x <= 5 and pathpointB.x - position.x >= -5:
+					pathpointdir.x = 0
+				else:
+					pathpointdir.x = sign(pathpointB.x - position.x)
 	
 	if targetBody.position.x - position.x - 6 <= 32 and targetBody.position.x - position.x >= -32:
 		Targetdir.x = 0
 		if detectbox.target != null:
 			state = "attack"
 		else:
+			if state == "attack":
+				motion.x = 0
+				yield(sprite_player, "animation_finished")
+				return
 			state = "walk"
 #			play("walk")
 	else:
+		if state == "attack":
+				motion.x = 0
+				yield(sprite_player, "animation_finished")
+				return
 		state = "walk"
 #		play("walk")
 		Targetdir.x = sign(targetBody.position.x - position.x)
@@ -141,10 +157,10 @@ func move(delta):
 			activepoint = 0
 			
 		if not idle:
-#			state = "walk"
+			state = "walk"
 			motion.x = lerp(motion.x,pathpointdir.x * SPEED, slide)
 		elif idle:
-#			state = "idle"
+			state = "idle"
 			motion.x = 0
 		
 		if pathpointdir.x == -1:
@@ -192,11 +208,12 @@ func _physics_process(delta):
 		play("idle")
 	elif state == "walk":
 		play("walk")
-		motion = move_and_slide(motion, UP)
 	elif state == "attack":
-		play("attack")
+		if $AttackTimer.time_left < 0.1:
+			play("attack")
+	motion = move_and_slide(motion, UP)
 	var is_flipped = motion.x < 0 || (TargetActive && targetBody.global_position.x < global_position.x)
-	if state != "confused":
+	if $confused.time_left < 0.1:
 		flip_h(is_flipped)
 
 func play(animation):
@@ -204,7 +221,6 @@ func play(animation):
 			sprite.play(animation)
 	elif sprite_player:
 		if sprite_player.assigned_animation != animation:
-			print(animation)
 			sprite_player.play(animation)
 
 
@@ -233,17 +249,18 @@ func _on_idletimer_timeout():
 
 
 func _on_DetectBox_no_targets_remain():
+	yield(sprite_player, "animation_finished")
 	$AttackTimer.stop()
 	if TargetActive:
-		pass
-#		play("walk")
+		state = "walk"
 	else:
-		pass
-#		play("idle")
+		state = "idle"
 
 
 func _on_DetectBox_target_detected(_target):
-#	play("attack")
+	if $confused.time_left < 0.1:
+		play("attack")
+	state = "attack"
 	$AttackTimer.start()
 
 func confuse():
@@ -251,7 +268,6 @@ func confuse():
 	confused.start()
 
 func _on_confused_timeout():
-	print('no confused')
 	sprite_player.play()
 	state = "idle"
 
@@ -268,11 +284,17 @@ func _on_HurtBox_took_damage(_amount):
 	state = "hit"
 
 func _on_AttackTimer_timeout():
-#	play("idle")
-#	play("attack")
 	pass
 	
 
 func _on_EffectPlayer_animation_finished(anim_name):
 	if anim_name == "Hit":
 		state = "idle"
+
+func _on_SpritePlayer_animation_finished(anim_name):
+	if anim_name == "attack" && state == "attack":
+		sprite_player.play("idle")
+
+
+func _on_EnergyTimer_timeout():
+	energy += 1

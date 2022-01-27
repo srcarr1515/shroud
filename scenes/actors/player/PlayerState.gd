@@ -48,7 +48,7 @@ func _on_Player_on_walk_stop():
 func _physics_process(delta):
 	if state.name == "Dead":
 		return
-	if crosshairs != null && !valid_targets.empty():
+	if crosshairs != null && !valid_targets.empty() && this.confuse_timer.time_left < 0.1:
 		var cur_target = valid_targets[nearest_target_index]
 		if GameData.is_destroyed(cur_target) || GameData.is_deleted_obj(cur_target):
 			valid_targets.erase(cur_target)
@@ -101,7 +101,6 @@ func _input(event):
 			var dir = Vector2()
 			dir.x = Input.get_joy_axis(0, JOY_AXIS_0)
 			dir.y = Input.get_joy_axis(0, JOY_AXIS_1)
-			print([dir.x, dir.y])
 			var endpoint = crosshairs.global_position
 			endpoint.x += dir.x * 24
 			endpoint.y += dir.y * 24
@@ -133,3 +132,6 @@ func _on_HurtBox_is_dead():
 func _on_HurtBox_took_damage(_amount):
 	if !["Dead"].has(state.name):
 		change_to("Stun")
+
+func _on_ConfuseTimer_timeout():
+	pass # Replace with function body.
