@@ -16,6 +16,8 @@ uniform float width : hint_range(0.0, 16) = 1.0;
 uniform vec4 outline_color : hint_color = vec4(0.0, 0.0, 0.0, 1.0);
 uniform int pixel_size : hint_range(1, 10) = 4;
 
+uniform vec4 flash_color : hint_color = vec4(1.0);
+uniform float flash_modifier : hint_range(0.0, 1.0) = 0.0;
 
 float random( float seed )
 {
@@ -24,6 +26,8 @@ float random( float seed )
 
 void fragment( )
 {
+//	vec4 color = texture(TEXTURE, UV);
+//	color.rgb = mix(color.rgb, flash_color.rgb, flash_modifier);
 	
 	float enable_shift = float(
 		random( trunc( TIME * shake_speed ) )
@@ -70,6 +74,10 @@ void fragment( )
 				}
 			}
 		}
+	}
+	
+	if(flash_modifier > 0.0){
+		pixel_color.rbg = mix(pixel_color.rgb, flash_color.rgb, flash_modifier);
 	}
 	
 	

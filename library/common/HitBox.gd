@@ -2,6 +2,7 @@ extends Node2D
 
 onready var this = get_parent()
 onready var hit_area = $Area
+var targets = []
 
 signal on_hit(target, damage)
 
@@ -9,16 +10,22 @@ func _ready():
 	hit_area.get_node("Shape")
 
 func set_disabled(is_disabled):
-	hit_area.get_node("Shape").disabled = is_disabled
+	hit_area.get_node("Shape").set_deferred("disabled", is_disabled)
 
+func _process(delta):
+	if !targets.empty():
+		var box = targets.front()
+		var target = box.this
+		var damage = 1
+		if "attack_power" in this:
+			damage = this.attack_power
+		box.get_hurt(damage)
+		emit_signal("on_hit", target, damage)
+		targets = []
 
 func _on_Area_area_entered(area):
 	var box = area.get_parent()
 	if "name" in box && box.name == "HurtBox":
 		if box.this != this: ## TODO: Check for ally
-			var target = box.this
-			var damage = 1
-			if "attack_power" in this:
-				damage = this.attack_power
-			box.get_hurt(damage)
-			emit_signal("on_hit", target, damage)
+			targets.push_back(box)
+

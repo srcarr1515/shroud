@@ -8,7 +8,7 @@ signal target_detected(_target)
 signal no_targets_remain
 
 func set_disabled(is_disabled):
-	area.get_node("Shape").disabled = is_disabled
+	area.get_node("Shape").set_deferred("disabled", is_disabled)
 	disabled = is_disabled
 
 func _on_Area_area_entered(_area):

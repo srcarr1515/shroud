@@ -1,21 +1,19 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://states/game/GameState.gd" type="Script" id=1]
 [ext_resource path="res://states/game/MainMenu.gd" type="Script" id=2]
 [ext_resource path="res://states/game/PauseMenu.gd" type="Script" id=3]
 [ext_resource path="res://states/game/InGame.gd" type="Script" id=4]
-[ext_resource path="res://scenes/actors/player/player.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Game.gd" type="Script" id=6]
 [ext_resource path="res://MainCamera.gd" type="Script" id=8]
-[ext_resource path="res://scenes/levels/1.tscn" type="PackedScene" id=9]
 
 [sub_resource type="Environment" id=1]
 background_mode = 4
 glow_enabled = true
-glow_intensity = 1.7
-glow_strength = 1.2
+glow_intensity = 0.5
+glow_strength = 0.7
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" groups=["game"]]
 script = ExtResource( 6 )
 
 [node name="GameState" type="Node" parent="."]
@@ -35,18 +33,9 @@ __meta__ = {
 "_editor_description_": "Landing Zone for Game Objects (Actors, Objects, Levels)"
 }
 
-[node name="Level" parent="Stage" instance=ExtResource( 9 )]
-
-[node name="Player" parent="Stage" instance=ExtResource( 5 )]
-position = Vector2( 167, 100 )
-max_jump_height = 64
-min_jump_height = 12
-falling_gravity_multiplier = 0.2
-
 [node name="MainCamera" type="Camera2D" parent="."]
 position = Vector2( 190, 110 )
 current = true
-smoothing_enabled = true
 script = ExtResource( 8 )
 
 [node name="UI" type="CanvasLayer" parent="MainCamera"]

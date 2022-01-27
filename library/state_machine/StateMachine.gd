@@ -19,6 +19,7 @@ func _ready():
 		_enter_state()
 
 func change_to(new_state):
+#	print(new_state)
 	var next_state = get_node(new_state)
 	if next_state != null:
 		if state == next_state:

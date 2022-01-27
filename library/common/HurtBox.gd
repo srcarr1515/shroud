@@ -14,7 +14,7 @@ func _ready():
 	set_hp(max_hp)
 
 func set_disabled(is_disabled):
-	hurt_area.get_node("Shape").disabled = is_disabled
+	hurt_area.get_node("Shape").set_deferred("disabled", is_disabled)
 
 func get_hp():
 	return hp

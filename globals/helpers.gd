@@ -2,6 +2,8 @@ extends Node
 
 func pick_nearest(group, _position):
 	var targets = get_tree().get_nodes_in_group(group)
+	if targets.empty():
+		return null
 	var nearest_target = targets.front()
 	if nearest_target:
 		for t in targets:

@@ -2,6 +2,7 @@ extends Actor
 var blink_position
 onready var blink = $Blink
 onready var combo = $Combo
+onready var trail = $Trail
 
 var slide_count
 
@@ -9,6 +10,10 @@ var input_type
 
 func _ready():
 	$GlowPlayer.play("Slow")
+	var hud = get_tree().get_nodes_in_group("hud").front()
+	hud.get_node("Label").text = "Health: {amt}".format({"amt": get_node("HurtBox").hp})
+#	var game = get_tree().get_nodes_in_group("game").front()
+#	game.get_node("MainCamera/UI/InGameHUD/Label").text = "Health: {amt}".format({"amt": get_node("HurtBox").hp})
 
 func _physics_process(_delta):
 	slide_count = get_slide_count()

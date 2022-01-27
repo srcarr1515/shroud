@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://icon.png" type="Texture" id=1]
+
+[sub_resource type="Gradient" id=6]
+offsets = PoolRealArray( 0, 0.447205, 1 )
+colors = PoolColorArray( 1, 1, 1, 0.380392, 1, 1, 1, 0.594499, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 6 )
+
+[sub_resource type="ParticlesMaterial" id=7]
+flag_disable_z = true
+direction = Vector3( 0, 0, 0 )
+spread = 11.05
+gravity = Vector3( 0, 1, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+color_ramp = SubResource( 5 )
+
+[node name="Trail" type="Particles2D"]
+modulate = Color( 1, 1, 1, 0.2 )
+z_index = -5
+emitting = false
+amount = 12
+lifetime = 0.6
+speed_scale = 4.5
+local_coords = false
+process_material = SubResource( 7 )
+texture = ExtResource( 1 )

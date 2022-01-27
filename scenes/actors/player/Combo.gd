@@ -10,11 +10,12 @@ func _ready():
 	this = get_parent()
 
 func action(event):
-	if event.is_action_pressed("ui_attack"):
+	if event.is_action_pressed("ui_attack") && $Delay.time_left == 0:
 		timer.start()
 		is_acting = true
 		current_step = track[step]
 		if step >= (track.size() - 1):
+			$Delay.start()
 			step = 0
 		else:
 			step += 1
@@ -23,3 +24,6 @@ func action(event):
 func _on_Timer_timeout():
 	step = 0
 	is_acting = false
+
+func _on_Delay_timeout():
+	pass # Replace with function body.

@@ -32,6 +32,8 @@ func _on_Player_on_landed():
 		change_to("Idle")
 
 func _on_Player_on_walk():
+	if ["Dead", "Stun"].has(state.name):
+		return
 	if state.name == "Attack":
 		this.vel = this.vel / 1.5
 		this.acc = this.acc / 1.5
@@ -56,9 +58,10 @@ func _physics_process(delta):
 			crosshairs.global_position = (valid_targets[nearest_target_index].center_point.global_position)
 			if Input.is_action_pressed("ui_attack"):
 				if crosshairs.global_position.distance_to(this.global_position) < 80:
-					var velocity = this.global_position.direction_to(crosshairs.global_position) * 300
+					var velocity = (this.global_position.direction_to(crosshairs.global_position)) * 300
 					velocity.y = 0
-					this.move_and_slide(velocity)
+					if this.global_position.distance_to(crosshairs.global_position) > 24:
+						this.move_and_slide(velocity)
 
 func remove_crosshairs():
 	crosshairs = null
@@ -126,3 +129,7 @@ func _on_AnimatedSprite_animation_finished():
 
 func _on_HurtBox_is_dead():
 	change_to("Dead")
+
+func _on_HurtBox_took_damage(_amount):
+	if !["Dead"].has(state.name):
+		change_to("Stun")
