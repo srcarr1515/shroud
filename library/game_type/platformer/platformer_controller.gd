@@ -95,7 +95,6 @@ func movement(delta):
 		acc.x = max_acceleration
 	if is_moving && !is_on_wall():
 		emit_signal("on_walk")
-		
 	if Input.is_action_just_released(input_right) || Input.is_action_just_released(input_left):
 		emit_signal("on_walk_stop")
 	

@@ -108,8 +108,9 @@ func teleport():
 #		if this.test_move(this.transform, Vector2(1, 0)):
 #			this.global_position = initial_endpoint
 
-		this.sprite.material.set_shader_param("shake_rate", 0)
+		
 		modulate.a = 1.0
+		this.sprite.material.set_shader_param("shake_rate", 0)
 		this.sprite.modulate = modulate
 		if this.type == "player":
 			this.acc = Vector2()

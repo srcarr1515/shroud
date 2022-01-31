@@ -4,13 +4,16 @@ onready var blink = $Blink
 onready var combo = $Combo
 onready var confuse_timer = $ConfuseTimer
 onready var player_state = $StateMachine
+onready var sprite_player = $SpritePlayer
+onready var glow_player = $GlowPlayer
+onready var fsm = $StateMachine
 
 var slide_count
 
 var input_type
 
 func _ready():
-	$GlowPlayer.play("Slow")
+	glow_player.play("Slow")
 	var hud = get_tree().get_nodes_in_group("hud").front()
 	hud.get_node("Label").text = "Health: {amt}".format({"amt": get_node("HurtBox").hp})
 #	var game = get_tree().get_nodes_in_group("game").front()
@@ -22,13 +25,6 @@ func _process(delta):
 		player_state.change_to("Dead")
 
 func _physics_process(_delta):
-	slide_count = get_slide_count()
-#	if slide_count:
-#		var collision = get_slide_collision(slide_count - 1)
-#		var collider = collision.collider
-#	print(slide_count)
-#	if blink_position:
-#	blink.look_at(get_global_mouse_position())
 	var enemies = get_tree().get_nodes_in_group("enemy")
 	for i in enemies: 
 		i.targetBody = self

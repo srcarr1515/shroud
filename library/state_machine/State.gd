@@ -34,3 +34,6 @@ func unhandled_key_input(_event):
 
 func notification(_what, _flag = false):
 	pass
+
+func on_AnimatedSprite_animation_finished():
+	pass

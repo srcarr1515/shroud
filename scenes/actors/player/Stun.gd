@@ -1,7 +1,7 @@
 extends State
 
 func enter():
-	this.sprite.stop()
+	this.sprite_player.stop()
 	this.vel.x = 0
 	this.acc.x = 0
 	this.get_node("GlowPlayer").play("Hit")
@@ -10,7 +10,7 @@ func enter():
 
 
 func _on_Timer_timeout():
-	this.sprite.play()	
+	this.sprite_player.play()	
 	this.disable_movement = false
 	this.get_node("GlowPlayer").play("Slow")
 	exit("Idle")

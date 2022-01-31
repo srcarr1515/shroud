@@ -5,6 +5,7 @@ onready var hurt_area  = $Area
 
 export (int) var max_hp = 10
 onready var hp setget set_hp, get_hp
+var death_signalled = false
 
 signal took_damage(amount)
 signal is_dead
@@ -31,7 +32,9 @@ func get_hurt(amount):
 	set_hp(new_hp)
 	if hp < 1:
 		hp = 0
-		emit_signal("is_dead")
+		if !death_signalled:
+			death_signalled = true
+			emit_signal("is_dead")
 	emit_signal("took_damage", amount)
 	return hp
 

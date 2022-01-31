@@ -1,6 +1,7 @@
 extends Node
 onready var timer = $Timer
-var track = ["attack_1", "attack_2", "attack_3"]
+#var track = ["dual_swords_attack_1", "dual_swords_attack_2", "dual_swords_attack_3"]
+var track = ["scythe_attack_2"]
 var current_step
 var step = 0
 var this
@@ -9,8 +10,8 @@ var is_acting = false
 func _ready():
 	this = get_parent()
 
-func action(event):
-	if event.is_action_pressed("ui_attack") && $Delay.time_left == 0:
+func action(execute=false):
+	if execute && $Delay.time_left == 0:
 		timer.start()
 		is_acting = true
 		current_step = track[step]

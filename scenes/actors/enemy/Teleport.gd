@@ -9,6 +9,7 @@ func hit_treshold_exceeded():
 				adjustment.x *= -2
 			this.flip_h(!player.sprite.flip_h)
 			player.confuse_timer.start()
+			player.fsm.remove_crosshairs()
 			teleport(player.global_position + adjustment)
 
 func teleport(_pos):

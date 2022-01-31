@@ -415,9 +415,6 @@ rotation = 1.5708
 shape = SubResource( 7 )
 disabled = true
 
-[node name="HurtBox" parent="." index="13"]
-max_hp = 100
-
 [node name="Shape" parent="HurtBox/Area" index="0"]
 position = Vector2( 8, -10 )
 shape = SubResource( 6 )
