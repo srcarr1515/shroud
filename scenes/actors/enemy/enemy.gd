@@ -14,6 +14,7 @@ onready var sprite_player = $Sprite/SpritePlayer
 onready var effect_player = $Sprite/EffectPlayer
 var state = "idle"
 
+export (bool) var is_disabled = false
 #export(Texture) var SpriteTex
 #export(String, "top", "bottom", "center") var TexAnchor = "center"
 export var SPEED = 300;
@@ -27,6 +28,7 @@ export var idleTime = 1.0
 export var outofrangeTime = 2.0
 export(String, "never", "none", "always") var canAlwaysSee = "none"
 export(float) var jumpmaxoffset = 0
+
 
 var isPlayer
 var idle : bool = false
@@ -193,16 +195,16 @@ func flip_h(is_flipped):
 
 func _physics_process(delta):
 	motion.y += GRAVITY
-#	print(state)
 	if state == "hit":
 		## Need hit animation?
 		play("idle")
-		effect_player.play("Hit")
+		effect_player.play("HitFlash")
 	elif state == "confused":
 		## Need confused animation?
 		play("idle")
 	else:
-		move(delta)
+		if !is_disabled:
+			move(delta)
 		effect_player.play("Glow")
 	if state == "idle":
 		play("idle")
@@ -211,10 +213,11 @@ func _physics_process(delta):
 	elif state == "attack":
 		if $AttackTimer.time_left < 0.1:
 			play("attack")
-	motion = move_and_slide(motion, UP)
-	var is_flipped = motion.x < 0 || (TargetActive && targetBody.global_position.x < global_position.x)
-	if $confused.time_left < 0.1:
-		flip_h(is_flipped)
+	if !is_disabled:
+		motion = move_and_slide(motion, UP)
+		var is_flipped = motion.x < 0 || (TargetActive && targetBody.global_position.x < global_position.x)
+		if $confused.time_left < 0.1:
+			flip_h(is_flipped)
 
 func play(animation):
 	if sprite.has_method("play"):

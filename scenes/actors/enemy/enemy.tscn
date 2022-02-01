@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scenes/actors/enemy/enemy.gd" type="Script" id=1]
 [ext_resource path="res://library/common/DetectBox.tscn" type="PackedScene" id=2]
@@ -105,13 +105,59 @@ shader_param/shake_block_size = 32.5
 shader_param/shake_color_rate = 0.01
 shader_param/Smooth = true
 shader_param/width = 0.2
-shader_param/outline_color = Color( 0.105882, 0.980392, 1, 1 )
+shader_param/outline_color = Color( 0, 1, 0.976471, 1 )
 shader_param/pixel_size = 1
 shader_param/flash_color = Color( 1, 1, 1, 1 )
-shader_param/flash_modifier = 0.0
+shader_param/flash_modifier = 1.0
+
+[sub_resource type="Animation" id=4]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/flash_modifier")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "HitFlash"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/flash_modifier")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0, 1.0, 0.0 ]
+}
+
+[sub_resource type="Animation" id=6]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/flash_modifier")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
 
 [node name="Enemy" type="KinematicBody2D" groups=["enemy"]]
-collision_layer = 5
+collision_layer = 4
 script = ExtResource( 1 )
 SPEED = 100
 JUMP_HEIGHT = -64
@@ -173,8 +219,11 @@ material = SubResource( 1 )
 position = Vector2( 0, -15 )
 
 [node name="SpritePlayer" type="AnimationPlayer" parent="Sprite"]
+anims/RESET = SubResource( 4 )
 
 [node name="EffectPlayer" type="AnimationPlayer" parent="Sprite"]
+anims/HitFlash = SubResource( 5 )
+anims/RESET = SubResource( 6 )
 
 [node name="confused" type="Timer" parent="."]
 wait_time = 0.5

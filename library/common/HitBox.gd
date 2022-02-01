@@ -3,6 +3,10 @@ extends Node2D
 onready var this = get_parent()
 onready var hit_area = $Area
 var targets = []
+export var knockback = false
+export var knockback_vector = Vector2(0, 1)
+export var knockback_duration = 10
+
 
 signal on_hit(target, damage)
 
@@ -20,6 +24,10 @@ func _process(delta):
 		if "attack_power" in this:
 			damage = this.attack_power
 		box.get_hurt(damage)
+		if knockback:
+			box.knockback_vector = knockback_vector
+			box.is_knocked_back = knockback
+			box.knockback_duration = knockback_duration
 		emit_signal("on_hit", target, damage)
 		targets = []
 

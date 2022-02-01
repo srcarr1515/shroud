@@ -2,6 +2,10 @@ extends Node2D
 
 onready var this = get_parent()
 onready var hurt_area  = $Area
+var is_knocked_back = false
+var knockback_vector = Vector2(0, 1)
+var knockback_duration = 0
+var knockback_timer = 0
 
 export (int) var max_hp = 10
 onready var hp setget set_hp, get_hp
@@ -16,6 +20,15 @@ func _ready():
 
 func set_disabled(is_disabled):
 	hurt_area.get_node("Shape").set_deferred("disabled", is_disabled)
+
+func _physics_process(delta):
+	if is_knocked_back:
+		knockback_timer += 1
+		if knockback_timer <= knockback_duration:
+			this.move_and_slide(knockback_vector)
+		else:
+			knockback_timer = 0
+			is_knocked_back = false
 
 func get_hp():
 	return hp
