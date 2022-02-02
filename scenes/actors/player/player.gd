@@ -7,17 +7,26 @@ onready var player_state = $StateMachine
 onready var sprite_player = $SpritePlayer
 onready var glow_player = $GlowPlayer
 onready var fsm = $StateMachine
+onready var spend_timer = $SpendTimer
+
+export var recover_energy_amt = 1
+export var max_energy = 10
+onready var energy setget set_energy, get_energy
+var dust = 100 setget set_dust, get_dust
 
 var slide_count
-
 var input_type
 
 func _ready():
 	glow_player.play("Slow")
 	var hud = get_tree().get_nodes_in_group("hud").front()
-	hud.get_node("Label").text = "Health: {amt}".format({"amt": get_node("HurtBox").hp})
-#	var game = get_tree().get_nodes_in_group("game").front()
-#	game.get_node("MainCamera/UI/InGameHUD/Label").text = "Health: {amt}".format({"amt": get_node("HurtBox").hp})
+#	hud.get_node("Label").text = "Health: {amt}".format({"amt": get_node("HurtBox").hp})
+	hud.get_node("HBoxContainer/Health/Bar").max_value = get_node("HurtBox").max_hp
+	hud.get_node("EnergyBar").max_value = max_energy
+	hud.get_node("HBoxContainer/Health/Bar").value = get_node("HurtBox").hp
+	hud.get_node("HBoxContainer/Dust").text = dust as String
+	energy = max_energy
+	
 
 func _process(delta):
 	## Brute force check on if you are dead!
@@ -45,6 +54,21 @@ func flip_h(is_flipped):
 	else:
 		hitbox.scale.x = 1
 
+func set_energy(value):
+	energy = value
+	var hud = get_tree().get_nodes_in_group("hud").front()
+	hud.get_node("EnergyBar").value = energy
+
+func get_energy():
+	return energy
+
+func set_dust(value):
+	dust = value
+	var hud = get_tree().get_nodes_in_group("hud").front()
+	hud.get_node("HBoxContainer/Dust").text = dust as String
+
+func get_dust():
+	return dust
 
 func _on_HurtBox_is_dead():
 	pass # Replace with function body.
@@ -54,4 +78,12 @@ func _on_HurtBox_took_damage(_amount):
 
 func _on_HurtBox_hp_changed(hp):
 	if Controller.game:
-		Controller.game.ui.get_node("Label").text = "Health: {amt}".format({"amt": hp})
+#		Controller.game.ui.get_node("Label").text = "Health: {amt}".format({"amt": hp})
+		Controller.game.ui.get_node("HBoxContainer/Health/Bar").value = hp
+
+func _on_EnergyTimer_timeout():
+	if energy < max_energy:
+		print(recover_energy_amt)
+		set_energy(energy + recover_energy_amt)
+		if energy > max_energy:
+			energy = max_energy

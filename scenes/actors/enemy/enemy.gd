@@ -15,6 +15,7 @@ onready var effect_player = $Sprite/EffectPlayer
 var state = "idle"
 
 export (bool) var is_disabled = false
+export (bool) var gravity_disabled = false
 #export(Texture) var SpriteTex
 #export(String, "top", "bottom", "center") var TexAnchor = "center"
 export var SPEED = 300;
@@ -52,7 +53,7 @@ func set_energy(_val):
 
 func _ready():
 	energy = max_energy
-	effect_player.play("Glow")
+	effect_player.play("OuterGlow")
 	if movement_settings == "static":
 		pathpointA = global_position
 		pathpointB = global_position
@@ -120,14 +121,12 @@ func move(delta):
 				yield(sprite_player, "animation_finished")
 				return
 			state = "walk"
-#			play("walk")
 	else:
 		if state == "attack":
 				motion.x = 0
 				yield(sprite_player, "animation_finished")
 				return
 		state = "walk"
-#		play("walk")
 		Targetdir.x = sign(targetBody.position.x - position.x)
 		
 	
@@ -194,7 +193,8 @@ func flip_h(is_flipped):
 		$HitBox.scale.x = 1
 
 func _physics_process(delta):
-	motion.y += GRAVITY
+	if !gravity_disabled:
+		motion.y += GRAVITY
 	if state == "hit":
 		## Need hit animation?
 		play("idle")
@@ -205,7 +205,7 @@ func _physics_process(delta):
 	else:
 		if !is_disabled:
 			move(delta)
-		effect_player.play("Glow")
+		effect_player.play("OuterGlow")
 	if state == "idle":
 		play("idle")
 	elif state == "walk":
@@ -223,7 +223,8 @@ func play(animation):
 	if sprite.has_method("play"):
 			sprite.play(animation)
 	elif sprite_player:
-		if sprite_player.assigned_animation != animation:
+		var anim_exists = sprite_player.has_animation(animation)
+		if anim_exists && sprite_player.assigned_animation != animation:
 			sprite_player.play(animation)
 
 
@@ -231,11 +232,8 @@ func _on_outofrange_timeout():
 	if !canSee():
 		TargetActive = false
 
-	
-
 func _on_VisibilityNotifier2D_screen_entered():
 	set_physics_process(true)
-
 
 
 func _on_VisibilityNotifier2D_screen_exited():
@@ -255,6 +253,7 @@ func _on_DetectBox_no_targets_remain():
 	yield(sprite_player, "animation_finished")
 	$AttackTimer.stop()
 	if TargetActive:
+		pass
 		state = "walk"
 	else:
 		state = "idle"
@@ -275,6 +274,11 @@ func _on_confused_timeout():
 	state = "idle"
 
 func _on_HurtBox_is_dead():
+	var dust = load("res://scenes/objects/Dust.tscn").instance()
+	dust.target_nearest_actor = "player"
+	dust.global_position = global_position
+	global_position.y += 32
+	get_tree().get_root().add_child(dust)
 	GameData.destroy(self)
 
 func _on_StunTimer_timeout():

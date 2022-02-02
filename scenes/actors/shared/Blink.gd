@@ -1,5 +1,7 @@
 extends Node2D
 
+
+export var energy_cost = 1
 onready var endpoint = $Endpoint
 onready var timer = $Timer
 export var deadzone = 0.5
@@ -73,7 +75,9 @@ func is_colliding():
 	return is_colliding
 
 func teleport():
-	if !is_blinking:
+	var energy_available = this.energy >= energy_cost
+	var dust_available = this.dust >= energy_cost
+	if !is_blinking && (energy_available || dust_available):
 		is_blinking = true
 		this.sprite.material.set_shader_param("shake_rate", 1)
 		var modulate = this.sprite.get_modulate()
@@ -82,16 +86,15 @@ func teleport():
 		yield(get_tree().create_timer(0.1), "timeout")
 		var init_local_endpoint = endpoint.position
 		var end_position = endpoint.global_position
-		is_valid_endpoint(end_position)
-		if endpoint_override:
+		if endpoint_override && is_valid_endpoint(endpoint_override):
 			end_position = endpoint_override
 		else:
 			if !is_valid_endpoint(endpoint.global_position):
 				while !is_valid_endpoint(endpoint.global_position):
 					endpoint.position.x -= 8
-#				endpoint.position.x -= 16
-#			if is_colliding():
-#				endpoint.position.x += 32
+	#				endpoint.position.x -= 16
+	#			if is_colliding():
+	#				endpoint.position.x += 32
 			if endpoint.position.x < 0:
 				endpoint.position.x = 0
 			end_position = get_valid_endpoint(endpoint.global_position)
@@ -99,6 +102,40 @@ func teleport():
 			this.global_position = end_position
 		endpoint.position = init_local_endpoint
 		toggle_raycasts(false)
+		if energy_available:
+			this.energy -= energy_cost
+		elif dust_available:
+			this.dust -= energy_cost
+
+
+#func teleport():
+#	if !is_blinking && this.energy >= energy_cost:
+#		is_blinking = true
+#		this.sprite.material.set_shader_param("shake_rate", 1)
+#		var modulate = this.sprite.get_modulate()
+#		modulate.a = 0.5
+#		this.sprite.modulate = modulate
+#		yield(get_tree().create_timer(0.1), "timeout")
+#		var init_local_endpoint = endpoint.position
+#		var end_position = endpoint.global_position
+#		is_valid_endpoint(end_position)
+#		if endpoint_override:
+#			endpoint.global_position = endpoint_override
+#
+#		if !is_valid_endpoint(endpoint.global_position):
+#			while !is_valid_endpoint(endpoint.global_position):
+#				endpoint.position.x -= 8
+##				endpoint.position.x -= 16
+##			if is_colliding():
+##				endpoint.position.x += 32
+#		if endpoint.position.x < 0:
+#			endpoint.position.x = 0
+#		end_position = get_valid_endpoint(endpoint.global_position)
+#		if end_position != null:
+#			this.global_position = end_position
+#		endpoint.position = init_local_endpoint
+#		toggle_raycasts(false)
+#		this.energy -= energy_cost
 		
 		
 		

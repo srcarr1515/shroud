@@ -198,10 +198,8 @@ tile_data = PoolIntArray( -1245199, 0, 0, -1245198, 0, 1, -1245197, 0, 1, -12451
 [node name="Slicer" parent="TileMap" index="0" instance=ExtResource( 3 )]
 position = Vector2( 310, -81 )
 
-[node name="Player" parent="TileMap" index="1" groups=["player"] instance=ExtResource( 4 )]
-position = Vector2( 592, -84 )
+[node name="Crawler" parent="TileMap" index="1" instance=ExtResource( 5 )]
+position = Vector2( 511, -97 )
 
-[node name="Crawler" parent="TileMap" index="2" instance=ExtResource( 5 )]
-position = Vector2( 531, -95 )
-collision_layer = 5
-is_disabled = true
+[node name="Player" parent="TileMap" index="2" groups=["player"] instance=ExtResource( 4 )]
+position = Vector2( 592, -84 )

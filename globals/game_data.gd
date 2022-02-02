@@ -3,6 +3,9 @@ extends Node
 onready var graveyard = []
 var player_data = {}
 
+func _ready():
+	player_data["dust"] = 0
+
 func destroy(_target):
 	graveyard.push_front(_target)
 	_target.queue_free()

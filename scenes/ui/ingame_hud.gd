@@ -1,6 +1,9 @@
 extends Control
 var player
 
+onready var health = $HBoxContainer/Health/Bar
+onready var energy = $EnergyBar
+
 func _ready():
 	set_player()
 

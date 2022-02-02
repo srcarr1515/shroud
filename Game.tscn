@@ -36,6 +36,7 @@ __meta__ = {
 [node name="MainCamera" type="Camera2D" parent="."]
 position = Vector2( 190, 110 )
 current = true
+zoom = Vector2( 0.3, 0.3 )
 script = ExtResource( 8 )
 
 [node name="UI" type="CanvasLayer" parent="MainCamera"]

@@ -81,6 +81,12 @@ func remove_crosshairs():
 func _input(event):
 	if state.name == "Dead":
 		return
+	if Input.is_action_pressed("ui_recover"):
+		var hurtbox = this.get_node("HurtBox")
+		if hurtbox.hp < hurtbox.max_hp && this.spend_timer.is_stopped(): 
+			this.dust -= 1
+			hurtbox.hp += 1
+			this.spend_timer.start()
 	if Input.is_action_just_pressed("ui_focus"):
 		var enemies = get_tree().get_nodes_in_group("enemy")
 		remove_crosshairs()
@@ -117,6 +123,7 @@ func _input(event):
 			if dir.y != 0:
 				endpoint.x += 24
 			this.blink.endpoint_override = endpoint
+			print(endpoint)
 			if abs(dir.x) > deadzone || abs(dir.y) > deadzone:
 				change_to("Blink")
 		if Input.is_action_just_pressed("ui_focus_next"):

@@ -5,6 +5,7 @@ onready var hit_area = $Area
 var targets = []
 export var knockback = false
 export var knockback_vector = Vector2(0, 1)
+export (String, "custom", "attacker_direction") var knockback_setting = "custom"
 export var knockback_duration = 10
 
 
@@ -25,6 +26,9 @@ func _process(delta):
 			damage = this.attack_power
 		box.get_hurt(damage)
 		if knockback:
+			if knockback_setting == "attacker_direction":
+				if !this.sprite.flip_h:
+					knockback_vector.x *= -1
 			box.knockback_vector = knockback_vector
 			box.is_knocked_back = knockback
 			box.knockback_duration = knockback_duration

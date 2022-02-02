@@ -46,9 +46,11 @@ radius = 4.0
 radius = 6.0
 
 [node name="Crawler" instance=ExtResource( 1 )]
-collision_layer = 0
+collision_layer = 1
 collision_mask = 0
 script = ExtResource( 2 )
+is_disabled = true
+gravity_disabled = true
 SPEED = 300
 JUMP_HEIGHT = -500
 
@@ -79,6 +81,7 @@ anims/RESET = SubResource( 1 )
 anims/move = SubResource( 2 )
 
 [node name="HitBox" parent="." index="12"]
+visible = false
 knockback = true
 knockback_vector = Vector2( 0, -200 )
 knockback_duration = 30
@@ -88,6 +91,7 @@ position = Vector2( 0, -3 )
 shape = SubResource( 4 )
 
 [node name="HurtBox" parent="." index="13"]
+visible = false
 max_hp = 2
 
 [node name="Shape" parent="HurtBox/Area" index="0"]
