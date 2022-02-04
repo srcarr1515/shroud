@@ -30,6 +30,8 @@ export var outofrangeTime = 2.0
 export(String, "never", "none", "always") var canAlwaysSee = "none"
 export(float) var jumpmaxoffset = 0
 
+export var gated_door_id = -1 ## For gated door logic
+
 
 var isPlayer
 var idle : bool = false

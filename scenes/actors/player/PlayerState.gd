@@ -81,6 +81,7 @@ func remove_crosshairs():
 func _input(event):
 	if state.name == "Dead":
 		return
+
 	if Input.is_action_pressed("ui_recover"):
 		var hurtbox = this.get_node("HurtBox")
 		if hurtbox.hp < hurtbox.max_hp && this.spend_timer.is_stopped(): 

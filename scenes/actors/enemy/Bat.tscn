@@ -5,7 +5,7 @@
 [ext_resource path="res://scenes/actors/enemy/Bat.gd" type="Script" id=3]
 
 [sub_resource type="CircleShape2D" id=5]
-radius = 232.0
+radius = 142.127
 
 [sub_resource type="CircleShape2D" id=4]
 radius = 23.0

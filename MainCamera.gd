@@ -6,6 +6,13 @@ func _ready():
 	goto_player()
 	smoothing_enabled = true
 
+func jump_to_player():
+	set_process(false)
+	smoothing_enabled = false
+	global_position = player.global_position
+	smoothing_enabled = true
+	set_process(true)
+
 func _process(delta):
 	goto_player()
 

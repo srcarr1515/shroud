@@ -33,8 +33,9 @@ __meta__ = {
 "_editor_description_": "Landing Zone for Game Objects (Actors, Objects, Levels)"
 }
 
-[node name="MainCamera" type="Camera2D" parent="."]
+[node name="MainCamera" type="Camera2D" parent="." groups=["main_camera"]]
 position = Vector2( 190, 110 )
+offset = Vector2( 0, -32 )
 current = true
 zoom = Vector2( 0.3, 0.3 )
 script = ExtResource( 8 )
