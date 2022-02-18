@@ -8,7 +8,8 @@ onready var sprite_player = $SpritePlayer
 onready var glow_player = $GlowPlayer
 onready var fsm = $StateMachine
 onready var spend_timer = $SpendTimer
-
+onready var scythe = $Scythe
+onready var scythe_player = $Scythe/AnimationPlayer
 export var recover_energy_amt = 1
 export var max_energy = 10
 onready var energy setget set_energy, get_energy

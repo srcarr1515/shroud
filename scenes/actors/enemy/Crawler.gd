@@ -5,6 +5,7 @@ var move = Vector2.ZERO
 
 func _ready():
 	$Sprite/SpritePlayer.play("move")
+	$Sprite/EffectPlayer.play("OuterGlow")
 
 func _physics_process(delta):
 	if rotating:

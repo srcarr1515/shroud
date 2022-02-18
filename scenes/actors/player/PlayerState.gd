@@ -10,24 +10,33 @@ func _process(delta):
 	pass
 
 func _on_Player_on_jump():
+	if state.name == "Attack":
+		return
 	this.sprite_player.play("jump")
 	change_to("Jump")
 
 func _on_Player_on_fall():
-	if state.name == "Attack":
-		if false:
-			## Left/Right Movement
-			this.vel.x = this.vel.x / 2
-			this.acc.x = this.acc.x / 2
-			## Fall Movement
-			this.vel.y = this.vel.y / 1.2
-			this.acc.y = this.acc.y / 1.2
-		change_to("AirSlam")
-	elif state.name != "AirSlam":
-		this.sprite_player.play("fall")
-		change_to("Fall")
+	pass
+#	if state.name == "Attack":
+##		if false:
+#		## Left/Right Movement
+#		this.vel.x = this.vel.x / 2
+#		this.acc.x = this.acc.x / 2
+#		## Fall Movement
+#		this.vel.y = this.vel.y / 1.2
+#		this.acc.y = this.acc.y / 1.2
+#		return
+#
+#
+#	if !["attack_left", "attack_right"].has(this.scythe_player.current_animation):
+#		print('fall')
+#		this.sprite_player.play("fall")
+#		change_to("Fall")
+
 
 func _on_Player_on_landed():
+	if ["Dead", "Stun", "Attack"].has(state.name):
+		return
 	this.disable_movement = false
 	if state.name == "Fall" || state.name == "AirSlam":
 		this.sprite_player.play("land")
@@ -35,38 +44,46 @@ func _on_Player_on_landed():
 		change_to("Idle")
 
 func _on_Player_on_walk():
-	if ["Dead", "Stun"].has(state.name):
+	if ["Dead", "Stun", "Attack"].has(state.name):
 		return
-	if state.name == "Attack":
-		if state.atk_input_timer <= 4:
-			this.vel = this.vel / 1.5
-			this.acc = this.acc / 1.5
-		else:
-			this.vel = Vector2.ZERO
-			this.acc = Vector2.ZERO
-		yield(this.sprite_player, "animation_finished")
-	if !["Attack", "AirSlam"].has(state.name):
-		this.sprite_player.play("run")
-		change_to("Run")
 	this.flip_h(this.vel.x < 0)
+	if state.name == "Attack":
+		yield(this.scythe_player, "animation_finished")
+	change_to("Run")
+#	if state.name == "Attack":
+##		if state.atk_input_timer <= 4:
+##			this.vel = this.vel / 1.5
+##			this.acc = this.acc / 1.5
+##		else:
+##			this.vel = Vector2.ZERO
+##			this.acc = Vector2.ZERO
+#		yield(this.scythe_player, "animation_finished")
+#	if !["Attack", "AirSlam"].has(state.name):
+#		this.sprite_player.play("run")
+#		change_to("Run")
+#	this.flip_h(this.vel.x < 0)
+#	if this.sprite.is_flipped_h():
+#		this.scythe_player.play("tilt_left")
+#	elif !this.sprite.is_flipped_h():
+#		this.scythe_player.play("tilt_right")
 
 func _on_Player_on_walk_stop():
-	if state.name != "Dead":
+	if state.name != "Dead" || state.name != "Attack":
 		change_to("Idle")
 	
 func _physics_process(delta):
 	if state.name == "Dead":
 		return
 	if crosshairs != null && !valid_targets.empty():
-		var cur_target = valid_targets[nearest_target_index]
-		if GameData.is_destroyed(cur_target) || GameData.is_deleted_obj(cur_target):
-			valid_targets.erase(cur_target)
-			if valid_targets.empty():
-				remove_crosshairs()
-		else:
-			crosshairs.global_position = (valid_targets[nearest_target_index].center_point.global_position)
-			if Input.is_action_pressed("ui_attack"):
-				if crosshairs.global_position.distance_to(this.global_position) < 80:
+		if valid_targets.size() - 1 >= nearest_target_index:
+			var cur_target = valid_targets[nearest_target_index]
+			if GameData.is_destroyed(cur_target) || GameData.is_deleted_obj(cur_target):
+				valid_targets.erase(cur_target)
+				if valid_targets.empty():
+					remove_crosshairs()
+			else:
+				crosshairs.global_position = (valid_targets[nearest_target_index].center_point.global_position)
+				if Input.is_action_pressed("ui_attack"):
 					if state.name != "AirSlam":
 						var velocity = (this.global_position.direction_to(crosshairs.global_position)) * 300
 						velocity.y = 0

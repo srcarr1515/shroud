@@ -200,19 +200,19 @@ func _physics_process(delta):
 	if state == "hit":
 		## Need hit animation?
 		play("idle")
-		effect_player.play("HitFlash")
 	elif state == "confused":
 		## Need confused animation?
 		play("idle")
 	else:
 		if !is_disabled:
 			move(delta)
-		effect_player.play("OuterGlow")
-	if state == "idle":
+	if state == "idle":	
 		play("idle")
 	elif state == "walk":
+
 		play("walk")
 	elif state == "attack":
+
 		if $AttackTimer.time_left < 0.1:
 			play("attack")
 	if !is_disabled:
@@ -250,6 +250,8 @@ func _on_idletimer_timeout():
 		activepoint = 0
 	pass # Replace with function body.
 
+func hit_flash_end():
+	effect_player.play("OuterGlow")
 
 func _on_DetectBox_no_targets_remain():
 	yield(sprite_player, "animation_finished")
@@ -290,6 +292,7 @@ func _on_StunTimer_timeout():
 func _on_HurtBox_took_damage(_amount):
 	$StunTimer.start()
 	detectbox.set_disabled(true)
+	effect_player.play("HitFlash")
 	state = "hit"
 
 func _on_AttackTimer_timeout():
